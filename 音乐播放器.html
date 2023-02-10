@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="CSS/music.css" />
+    <title>音乐播放器</title>
+  </head>
+  <body>
+    <!-- 背景板 -->
+    <div class="background">
+      <div class="head">
+        <audio
+          src="Audio/花痕 -shirushi.flac"
+          @play="play"
+          @pause="pause"
+          preload=""
+          @ended="setMode"
+        ></audio>
+        <div class="name">
+          <h1>音乐播放器</h1>
+          <img id="pic" src="Ima/1.jpg" alt="音乐播放器" title="音乐播放器" />
+        </div>
+        <h2>
+          <em> jkskj出品&emsp;必属精品</em>
+        </h2>
+      </div>
+      <!-- 音乐区 -->
+      <div class="music-background">
+        <!-- 播放列表 -->
+        <div class="playlist">
+          <em>播放列表</em>
+          <div class="list">
+            <ul>
+              <li v-for="(music,index) in playingList" class="play-list">
+                <!-- <span class="index"> {{index+1}}</span> -->
+                <label>{{music.name}}</label>
+                <button class="play" @click="playList(index)"></button>
+                <button class="destroy" @click="remove(index)"></button>
+              </li>
+            </ul>
+          </div>
+          <button class="clear" @click="clear"><i></i>清空列表</button>
+        </div>
+        <!-- 左侧图片 -->
+        <div class="img-back">
+          <div class="div-title">
+            <div class="search-bar">
+              <em>搜索：</em>
+              <!-- 搜索歌曲 -->
+              <input
+                class="search-line"
+                type="text"
+                autocomplete="off"
+                v-model="query"
+                @keyup.enter="searchMusic"
+                placeholder="歌名、歌手、专辑"
+              />
+            </div>
+            <!-- 歌曲信息 -->
+            <h1 v-show="playingMusic.name!=''">歌曲：{{playingMusic.name}}</h1>
+            <p v-show="playingMusic.artists.length!=0">
+              歌手：<span v-for="artist in playingMusic.artists"
+                >&emsp;{{artist.name}}</span
+              >
+            </p>
+            <p v-show="playingMusic.album!=''">
+              专辑：<span v>&emsp;{{playingMusic.album}}</span>
+            </p>
+          </div>
+          <img
+            src="Ima/2.jpg"
+            alt="一起听歌！！！"
+            title="一起听歌！！！with you ❛‿˂̵✧"
+          />
+        </div>
+        <!-- 中间搜索结果 -->
+        <div class="search">
+          <!-- 搜索结果-->
+          <ul class="search-list">
+            <li v-for="(item,index) in searchList">
+              <a
+                href="javascript:;"
+                @click="add(item.id,item.name,item.artists)"
+              ></a>
+              <b
+                >{{item.name}} --------------<b
+                  v-for="(artist) in item.artists"
+                  class="artists"
+                  >{{artist.name}}&emsp;</b
+                ></b
+              >
+              <span><i></i></span>
+            </li>
+          </ul>
+        </div>
+        <!-- 专辑封面 -->
+        <div class="cover-comment">
+          <div class="box">
+            <div
+              v-show="playingMusic.musicCover!=''"
+              class="music-cover"
+              :class="{playing:isPlaying}"
+            >
+              <img
+                :src="playingMusic.musicCover"
+                alt="专辑封面"
+                title="专辑封面 哇哦！！！⸝⸝ ᷇࿀ ᷆⸝⸝好好看"
+              />
+            </div>
+          </div>
+          <div class="comment-list">
+            <dl v-for="item in playingMusic.hotComments">
+              <dt><img :src="item.user.avatarUrl" alt="" /></dt>
+              <dd class="user-name">{{item.user.nickname}}</dd>
+              <dd class="user-comment">{{item.content}}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <!-- 控制区 -->
+      <div class="control-back">
+        <!-- 进度条 -->
+        <div class="progress-bar">
+          <div class="progress-all"></div>
+          <div class="progress-now"></div>
+        </div>
+        <span class="time">00:00/00:00</span>
+        <!-- 控制按钮 -->
+        <div class="control">
+          <!-- 上一首、下一首、暂停播放 -->
+          <div class="control-btn">
+            <a href="javascript:;" class="up" @click="last"></a>
+            <a href="javascript:;" class="play-pause" onclick="setPlay()"></a>
+            <a href="javascript:;" class="down" @click="next"></a>
+          </div>
+          <!-- 播放模式、声音 -->
+          <div class="control-right">
+            <a href="javascript:;" class="mode" @click="changeMode"></a>
+            <a href="javascript:;" class="volume" onclick="setMuted()"></a>
+            <div class="volume-back">
+              <div class="volume-all"></div>
+              <div class="volume-now"></div>
+            </div>
+            <span class="volume-text">100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="JS/music.js"></script>
+</html>
